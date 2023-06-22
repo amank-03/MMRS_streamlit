@@ -5,3 +5,4 @@ boto3
 streamlit==0.85.1
 pytz==2021.3
 streamlit-auth==0.5.2
+click>=7.0,<8.0
