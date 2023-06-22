@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    amank:
+      email: as09493@gmail.com
+      name: Aman Kumar
+      password: "$2b$12$I3Wp4qr/8Dty2i02SpN.5u6q0opxY.2zfYuFXZ.ocfob59L2eFxWa" # To be replaced with hashed password
+    deeptik:
+      email: deeptikcmi@gmail.com
+      name: Deepti Kumawat
+      password: "$2b$12$zfakDSltsGhv0n05malm2.4IFa8Fvaelqq1ugKvJfRyIhSy1t9kkK" # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: cookie # Must be string
+  name: random_cookie
+preauthorized:
+  emails:
+    - amansingh00184@outlook.com
