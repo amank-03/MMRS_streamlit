@@ -5,3 +5,4 @@ PyYAML==6.0
 PyYAML==6.0
 streamlit==1.23.1
 streamlit_authenticator==0.2.2
+click<8.0,>=7.0
