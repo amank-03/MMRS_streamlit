@@ -1,5 +1,7 @@
 altair==5.0.1
-streamlit== 1.1.*
 appdirs==1.4.4
 asgiref==3.7.2
 boto3
+streamlit==0.85.1
+pytz==2021.3
+streamlit-auth==0.5.2
