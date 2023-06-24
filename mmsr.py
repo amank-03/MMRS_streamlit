@@ -16,11 +16,36 @@ import streamlit_authenticator as stauth
 
 import yaml
 
+st.set_page_config(page_title= "MMRS", page_icon= "chart_with_upwards_trend", layout="wide", initial_sidebar_state="auto", menu_items=None)
+
+page_bg_img_ = '''
+<style> 
+[data-testid="stAppViewContainer"]{
+background-image:  url("https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
+background-size: cover;
+}
+
+
+[data-testid="stSidebar"]{
+background-image: url("https://img.freepik.com/free-vector/grunge-watercolor-background-using-pastel-colours_1048-6530.jpg?size=626&ext=jpg&ga=GA1.1.2098132722.1687610023&semt=ais");
+background-size: cover;
+}
+
+[data-testid="stHeader"] {
+background-image: url("https://img.freepik.com/free-photo/colorful-geometric-cardboards_24972-1078.jpg?size=626&ext=jpg&ga=GA1.1.2098132722.1687610023&semt=ais");
+background-size: cover;
+}
+
+</style>
+'''
+st.markdown(page_bg_img_, unsafe_allow_html=True)
+
+
 data = pd.read_csv("mms.csv")
 data_purchase = pd.read_csv("purchase.csv" )
 #---------------------------------------------------------
 
-st.set_page_config(page_title= "MMRS", page_icon= "chart_with_upwards_trend", layout="wide", initial_sidebar_state="auto", menu_items=None)
+
 # Authentication 
 
 from yaml.loader import SafeLoader
@@ -49,10 +74,14 @@ if authentication_status:
     
     radio = st.sidebar.selectbox('Select Task', ["None", "Registration" , "Billing" , "Transaction" , "UpdateEntries"])
     #tab1, tab2, tab3 = st.tabs(["Cat", "Dog", "Owl"])
+
+
 #-----------------------------------------------------------------------------------------------------------
     
     if radio == "None":
-         st.title('Welcome to Manpower Management and Reward System')   
+         st.title('Welcome to Manpower Management and Reward System')  
+
+
     if radio == "Registration":
 
       st.title("Manpower Registration")
@@ -331,6 +360,7 @@ if authentication_status:
 
                     st.write("Entries Updated!" )
                     st.write(updated_entry)
+                    data.to_csv("mms.csv" ,  index = False)
         with tab2:
             bill_update = st.text_input("Enter Bill number to be updated")
             if bill_update:
@@ -386,6 +416,8 @@ if authentication_status:
 
                     st.write("Entries Updated!" )
                     st.write(updated_bill_entry)
+                    data_purchase.to_csv("purchase.csv" , index = False)
+
         
         
                         
