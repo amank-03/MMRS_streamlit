@@ -41,6 +41,7 @@ background-size: cover;
 st.markdown(page_bg_img_, unsafe_allow_html=True)
 
 
+
 data = pd.read_csv("mms.csv")
 data_purchase = pd.read_csv("purchase.csv" )
 #---------------------------------------------------------
@@ -69,8 +70,8 @@ if authentication_status is None:
     st.warning('Please enter your username and password')
 
 if authentication_status:
-    authenticator.logout('Logout', 'main', key='unique_key')
-    st.sidebar.write(f'Welcome *{name}*')
+    authenticator.logout('Logout', 'sidebar', key='unique_key')
+    st.write(f'Welcome!!:hatching_chick: *{name}*')
     
     radio = st.sidebar.selectbox('Select Task', ["None", "Registration" , "Billing" , "Transaction" , "UpdateEntries"])
     #tab1, tab2, tab3 = st.tabs(["Cat", "Dog", "Owl"])
@@ -134,8 +135,7 @@ if authentication_status:
       csv = convert_df(data)
 
       st.download_button(label="Download Registration data as CSV",data=csv, file_name='mms.csv',mime='text/csv',)
-      #st.download_button(label="Download Registration data as CSV", data = data_, file_name='mms.csv')
-
+  
     #-----------------------------------------------------------------------------------------------------------------------------
 
     if radio == "Billing":
@@ -157,11 +157,7 @@ if authentication_status:
               if purchase_type == "Referral":
                 ref_num = st.text_input("Enter referral ID")
                 percent_ref = st.selectbox('Select Reward Percentage for referrer', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
-          #data.loc[len(data.index)] = [ID , name , F_name , add , mob, bp_num , ref]
-
-          #data.to_csv("mms.csv" , index = False)
-
-
+          
           submit_button = st.form_submit_button(label='Submit')
 
         if purchase_type =="Self":
@@ -314,28 +310,38 @@ if authentication_status:
         
         with tab1:
             ID_update = st.text_input("Enter ID to be updated")
+            
             if ID_update:
-                idx_update = data[data["ID"] == ID_update].index[0]
-                curr_ent = data[data["ID"] == ID_update]
-                st.write("Current Entry is" )
-                st.write(curr_ent)
-                st.write("Fill detils to be changed")
-                
-                with st.form(key='reg_update'):   
+                if ID_update in list(data["ID"]):
+                    idx_update = data[data["ID"] == ID_update].index[0]
+                    curr_ent = data[data["ID"] == ID_update]
+                    st.write("Current Entry is" )
+                    st.write(curr_ent)
+                    st.write("Fill detils to be changed")
                     
-                    col5 , col6 = st.columns(2)
+                    with st.form(key='reg_update'):   
+                        
+                        col5 , col6 = st.columns(2)
 
-                    with col5:
+                        with col5:
 
-                        name_up = st.text_input("Name")
-                        F_name_up = st.text_input("Father's Name")
-                        add_up = st.text_input("Address")
-                        mob_up = st.text_input("Mobile Number")
-                    with col6:
+                            name_up = st.text_input("Name")
+                            F_name_up = st.text_input("Father's Name")
+                            add_up = st.text_input("Address")
+                            mob_up = st.text_input("Mobile Number")
+                        with col6:
 
-                        aadhar_num_up = st.text_input("Enter Aadhar number")
-                        bp_num_up = st.text_input("Enter BP number")
-                        ref_up = st.text_input("Enter reference ID")
+                            aadhar_num_up = st.text_input("Enter Aadhar number")
+                            bp_num_up = st.text_input("Enter BP number")
+                            ref_up = st.text_input("Enter reference ID")
+
+                        
+                        
+                        submit_button_up = st.form_submit_button(label='Submit')
+                else:
+                    st.warning("No user found", icon="⚠️")      
+
+                if ID_update in list(data["ID"]) and submit_button_up:
 
                     if name_up:
                         data.loc[idx_update , 'Name'] = name_up
@@ -347,15 +353,12 @@ if authentication_status:
                         data.loc[idx_update , 'Mobile Number '] = mob_up
                     if aadhar_num_up:  
                         data.loc[idx_update , 'Aadhar Number'] = aadhar_num_up
-
                     if bp_num_up:
                         data.loc[idx_update , 'BP number'] = bp_num_up
                     if ref_up:
                         data.loc[idx_update , 'Ref by'] = ref_up
+
                     
-                    submit_button_up = st.form_submit_button(label='Submit')
-                    
-                if submit_button_up:
                     updated_entry = data[data["ID"] == ID_update]
 
                     st.write("Entries Updated!" )
@@ -363,34 +366,43 @@ if authentication_status:
                     data.to_csv("mms.csv" ,  index = False)
         with tab2:
             bill_update = st.text_input("Enter Bill number to be updated")
+            
             if bill_update:
-                idx_bill_update = data_purchase[data_purchase["Bill_no"] == int(bill_update)].index[0]
-                curr_ent_bill = data_purchase[data_purchase["Bill_no"] == int(bill_update)]
-                st.write("Current Entry is" )
-                st.write(curr_ent_bill)
-                st.write("Fill detils to be changed")
-                
-                purchase_type_up = st.selectbox('Purchase Type',  ["Self" , "Referral"])
-                
-                with st.form(key='bill_update'):   
-                    
-                    col7 , col8 = st.columns(2)
 
-                    with col7:
-                        
-                        buyer_ID_up = st.text_input("Enter Buyer's ID")
-                        date_up = st.date_input("Enter Date of Purchase")
-                        bill_amt_up = st.number_input("Enter Bill Amount")
-
-                   
-                    with col8:
-                        
-                        percent_up = st.selectbox('Select Reward Percentage', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
-                        if purchase_type_up == "Referral":
-                            ref_num_up = st.text_input("Enter referral ID")
-                            percent_ref_up = st.selectbox('Select Reward Percentage for referrer', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
-                    submit_button_bill_up = st.form_submit_button(label='Submit')
+                if int(bill_update) in list(data_purchase["Bill_no"]):
+                    idx_bill_update = data_purchase[data_purchase["Bill_no"] == int(bill_update)].index[0]
+                    curr_ent_bill = data_purchase[data_purchase["Bill_no"] == int(bill_update)]
+                    st.write("Current Entry is" )
+                    st.write(curr_ent_bill)
+                    st.write("Fill detils to be changed")
                     
+                    purchase_type_up = st.selectbox('Purchase Type',  ["Self" , "Referral"])
+                    
+                    with st.form(key='bill_update'):   
+                        
+                        col7 , col8 = st.columns(2)
+
+                        with col7:
+                            
+                            buyer_ID_up = st.text_input("Enter Buyer's ID")
+                            date_up = st.date_input("Enter Date of Purchase")
+                            bill_amt_up = st.number_input("Enter Bill Amount")
+
+                    
+                        with col8:
+                            
+                            percent_up = st.selectbox('Select Reward Percentage', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
+                            if purchase_type_up == "Referral":
+                                ref_num_up = st.text_input("Enter referral ID")
+                                percent_ref_up = st.selectbox('Select Reward Percentage for referrer', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
+                        submit_button_bill_up = st.form_submit_button(label='Submit')
+                else:
+                    st.warning("NO such bill found" , icon="⚠️")    
+
+                    
+ 
+                if int(bill_update) in list(data_purchase["Bill_no"]) and submit_button_bill_up:
+
                     if buyer_ID_up:
                         data_purchase.loc[idx_bill_update , 'Buyers ID'] = buyer_ID_up
                         
@@ -409,16 +421,12 @@ if authentication_status:
                         if percent_ref_up:
                             data_purchase.loc[idx_bill_update , 'Reward percent referrer'] = percent_ref_up
                             
- 
-                if submit_button_bill_up:
         
                     updated_bill_entry = data_purchase[data_purchase["Bill_no"] == int(bill_update)]
 
                     st.write("Entries Updated!" )
                     st.write(updated_bill_entry)
                     data_purchase.to_csv("purchase.csv" , index = False)
-
-        
         
                         
 
