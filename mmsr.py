@@ -8,12 +8,14 @@ import streamlit as st
 
 import pandas as pd 
 import numpy as np
-
+import requests
 import pickle 
 from pathlib import Path
 
 import streamlit_authenticator as stauth
-
+#import streamlit_lottie 
+from streamlit_lottie import st_lottie
+import streamlit.components.v1 as components
 import yaml
 
 st.set_page_config(page_title= "MMRS", page_icon= "chart_with_upwards_trend", layout="wide", initial_sidebar_state="auto", menu_items=None)
@@ -21,7 +23,7 @@ st.set_page_config(page_title= "MMRS", page_icon= "chart_with_upwards_trend", la
 page_bg_img_ = '''
 <style> 
 [data-testid="stAppViewContainer"]{
-background-image:  url("https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
+background-image:  url("#https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
 background-size: cover;
 }
 
@@ -39,6 +41,29 @@ background-size: cover;
 </style>
 '''
 st.markdown(page_bg_img_, unsafe_allow_html=True)
+
+def add_logo():
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"] {
+                background-image: url("https://assets1.lottiefiles.com/packages/lf20_3vbOcw.json");
+                background-repeat: no-repeat;
+                padding-top: 120px;
+                background-position: 20px 20px;
+            }
+            [data-testid="stSidebarNav"]::before {
+                content: "My Company Name";
+                margin-left: 20px;
+                margin-top: 20px;
+                font-size: 30px;
+                position: relative;
+                top: 100px;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 
@@ -73,15 +98,38 @@ if authentication_status:
     authenticator.logout('Logout', 'sidebar', key='unique_key')
     st.write(f'Welcome!!:hatching_chick: *{name}*')
     
-    radio = st.sidebar.selectbox('Select Task', ["None", "Registration" , "Billing" , "Transaction" , "UpdateEntries"])
+    radio = st.sidebar.selectbox('Select Task', ["Home", "Registration" , "Billing" , "Transaction" , "UpdateEntries"])
     #tab1, tab2, tab3 = st.tabs(["Cat", "Dog", "Owl"])
 
 
 #-----------------------------------------------------------------------------------------------------------
-    
-    if radio == "None":
-         st.title('Welcome to Manpower Management and Reward System')  
+    if radio != "Home":
+        page_bg_img__ = '''
+        <style> 
+        [data-testid="stAppViewContainer"]{
+        background-image:  url("https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
+        background-size: cover;
+        }
+        </style>
+        '''
+        st.markdown(page_bg_img__, unsafe_allow_html=True)
 
+    if radio == "Home":  
+        st.title('Welcome to Manpower Management and Reward System')  
+
+        @st.cache_data
+        def load_lottieurl(url:str):
+            r = requests.get(url)
+            if r.status_code != 200:
+                return None
+            return r.json( )
+        
+        lottie_url = "https://assets1.lottiefiles.com/packages/lf20_wtpprtnc.json"
+        lottie_json = load_lottieurl(lottie_url)
+
+        st_lottie(lottie_json ,key = "Hello" ,  height= 400) 
+
+        
 
     if radio == "Registration":
 
@@ -107,21 +155,27 @@ if authentication_status:
         submit_button = st.form_submit_button(label='Submit')
 
       if submit_button:
-        
-        if ID and name and F_name and add and mob and aadhar_num and bp_num and ref:
-            if ID not in list(data["ID"]) and aadhar_num not in list(data["Aadhar Number"]) and bp_num not in list(data['BP number']):
-                new_row = {"ID": ID , 'Name': name, 'Father Name': F_name, 'Address': add, 'Mobile Number ':mob, 'Aadhar Number':aadhar_num ,  'BP number':bp_num, 'Ref by':ref , 'Reward_points': 0 }
-                data = data.append(new_row, ignore_index=True)
-                st.success("Data added successfully.")
-            else:
-                st.error("User already exists!")
-                st.warning("ID, Aadhar number and BP number has to be unique")      
-
+        if len(mob) == 10:
+            if len(aadhar_num) == 12:
             
+                if ID and name and F_name and add and mob and aadhar_num and bp_num and ref:
+                    if ID not in list(data["ID"]) and aadhar_num not in list(data["Aadhar Number"]) and bp_num not in list(data['BP number']):
+                        new_row = {"ID": ID , 'Name': name, 'Father Name': F_name, 'Address': add, 'Mobile Number ':mob, 'Aadhar Number':aadhar_num ,  'BP number':bp_num, 'Ref by':ref , 'Reward_points': 0 }
+                        data = data.append(new_row, ignore_index=True)
+                        st.success("Data added successfully.")
+                    else:
+                        st.error("User already exists!")
+                        st.warning("ID, Aadhar number and BP number has to be unique")      
 
+                    
+
+                else:
+
+                    st.warning("Please fill in all fields.")
+            else:
+                st.warning("Invalid Aadhaar Number" , icon="⚠️")
         else:
-
-            st.warning("Please fill in all fields.")
+            st.warning("Invalid Phone Number" , icon="⚠️")
 
       data.to_csv("mms.csv" , index = False)
       data_ = data
@@ -155,7 +209,7 @@ if authentication_status:
           with col4:
               percent = st.selectbox('Select Reward Percentage', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
               if purchase_type == "Referral":
-                ref_num = st.text_input("Enter referral ID")
+                ref_num = st.text_input("Enter referrer ID")
                 percent_ref = st.selectbox('Select Reward Percentage for referrer', [0.5, 1, 1.5, 2, 2.5 , 3, 3.5, 4, 4.5, 5, 5.5, 6])
           
           submit_button = st.form_submit_button(label='Submit')
@@ -168,7 +222,7 @@ if authentication_status:
             if buyer_ID and  bill_num and bill_amt:
                 if buyer_ID in list(data["ID"]):
                     if int(bill_num) not in list(data_purchase['Bill_no']):
-                        new_row = {'P_type':purchase_type, 'Bill_no': bill_num, 'DOP':date, 'Bill Amount':bill_amt, 'Reward percent slef ':percent, 'Referrer ID':ref_num , 'Reward percent referrer': percent_ref , "Buyers ID": buyer_ID }
+                        new_row = {'P_type':purchase_type, 'Bill_no': bill_num, 'DOP':date, 'Bill Amount':bill_amt, 'Reward percent self ':percent, 'Referrer ID':ref_num , 'Reward percent referrer': percent_ref , "Buyers ID": buyer_ID }
 
                         data_purchase = data_purchase.append(new_row, ignore_index=True)
                         st.success("Data added successfully.")
@@ -246,7 +300,7 @@ if authentication_status:
           
           
           amt_self = self_df['Bill Amount']
-          per_self = self_df['Reward percent slef ']
+          per_self = self_df['Reward percent self ']
           total_self  = np.dot(amt_self, per_self)/100
             
           html_str_4 = f""" ### :green[Total points earned by self: {total_self}]"""
@@ -265,7 +319,7 @@ if authentication_status:
 
           refer_df = data_purchase[data_purchase['Referrer ID'] == float(ID)]
           amt_ref = refer_df['Bill Amount']
-          per_ref = refer_df['Reward percent slef ']
+          per_ref = refer_df['Reward percent self ']
           total_ref  = np.dot(amt_ref, per_ref)/100
           html_str_5 = f""" ### :green[Total points earned by referrals: {total_ref}]"""
 
@@ -413,7 +467,7 @@ if authentication_status:
                         data_purchase.loc[idx_bill_update , 'Bill Amount'] = bill_amt_up
                     
                     if percent_up:
-                        data_purchase.loc[idx_bill_update , 'Reward percent slef '] = percent_up
+                        data_purchase.loc[idx_bill_update , 'Reward percent self '] = percent_up
                      
                     if purchase_type_up == "Referral":
                         if ref_num_up:
