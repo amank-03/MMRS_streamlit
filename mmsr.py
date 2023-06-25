@@ -9,13 +9,11 @@ import streamlit as st
 import pandas as pd 
 import numpy as np
 import requests
-import pickle 
+#import pickle 
 from pathlib import Path
 
 import streamlit_authenticator as stauth
-#import streamlit_lottie 
-from streamlit_lottie import st_lottie
-import streamlit.components.v1 as components
+
 import yaml
 
 st.set_page_config(page_title= "MMRS", page_icon= "chart_with_upwards_trend", layout="wide", initial_sidebar_state="auto", menu_items=None)
@@ -23,7 +21,7 @@ st.set_page_config(page_title= "MMRS", page_icon= "chart_with_upwards_trend", la
 page_bg_img_ = '''
 <style> 
 [data-testid="stAppViewContainer"]{
-background-image:  url("#https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
+background-image:  url("https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
 background-size: cover;
 }
 
@@ -41,30 +39,6 @@ background-size: cover;
 </style>
 '''
 st.markdown(page_bg_img_, unsafe_allow_html=True)
-
-def add_logo():
-    st.markdown(
-        """
-        <style>
-            [data-testid="stSidebar"] {
-                background-image: url("https://assets1.lottiefiles.com/packages/lf20_3vbOcw.json");
-                background-repeat: no-repeat;
-                padding-top: 120px;
-                background-position: 20px 20px;
-            }
-            [data-testid="stSidebarNav"]::before {
-                content: "My Company Name";
-                margin-left: 20px;
-                margin-top: 20px;
-                font-size: 30px;
-                position: relative;
-                top: 100px;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
 
 
 data = pd.read_csv("mms.csv")
@@ -103,33 +77,8 @@ if authentication_status:
 
 
 #-----------------------------------------------------------------------------------------------------------
-    if radio != "Home":
-        page_bg_img__ = '''
-        <style> 
-        [data-testid="stAppViewContainer"]{
-        background-image:  url("https://img.freepik.com/free-photo/yellow-cardboard-papers-row-blue-background_23-2147878381.jpg?size=626&ext=jpg&ga=GA1.2.2098132722.1687610023&semt=ais");
-        background-size: cover;
-        }
-        </style>
-        '''
-        st.markdown(page_bg_img__, unsafe_allow_html=True)
-
     if radio == "Home":  
         st.title('Welcome to Manpower Management and Reward System')  
-
-        @st.cache_data
-        def load_lottieurl(url:str):
-            r = requests.get(url)
-            if r.status_code != 200:
-                return None
-            return r.json( )
-        
-        lottie_url = "https://assets1.lottiefiles.com/packages/lf20_wtpprtnc.json"
-        lottie_json = load_lottieurl(lottie_url)
-
-        st_lottie(lottie_json ,key = "Hello" ,  height= 400) 
-
-        
 
     if radio == "Registration":
 
